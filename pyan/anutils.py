@@ -45,9 +45,14 @@ def get_module_name(filename, root: str = None):
             directories.pop(0)
 
     else:  # root is already known - just walk up until it is matched
-        while directories[0][0] != root:
-            potential_root = os.path.dirname(directories[0][0])
+        directory_first_path, is_True = directories[0]
+        while os.path.abspath(directory_first_path) != root:
+            directory_first_abspath = os.path.abspath(directory_first_path)
+            potential_root = os.path.dirname(directory_first_path)
             directories.insert(0, (potential_root, True))
+            directory_first_path, is_True = directories[0]
+            if not potential_root:
+                break
 
     mod_name = ".".join([os.path.basename(f[0]) for f in directories])
     return mod_name
